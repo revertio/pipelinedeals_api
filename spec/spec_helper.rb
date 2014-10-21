@@ -1,14 +1,18 @@
 require 'rubygems'
 require 'vcr'
 require 'pipeline_deals'
-require 'pry'
 
-require 'pipeline_deals/pagination_spec'
-require 'pipeline_deals/has_documents'
-require 'pipeline_deals/has_notes'
-require 'pipeline_deals/has_calendar_entries'
-require 'pipeline_deals/has_people'
-require 'pipeline_deals/has_deals'
+begin
+  require 'pry'
+rescue LoadError
+end
+
+require 'support/pagination_spec'
+require 'support/has_documents'
+require 'support/has_notes'
+require 'support/has_calendar_entries'
+require 'support/has_people'
+require 'support/has_deals'
 
 PipelineDeals::Resource.site = ENV['PIPELINEDEALS_URL'] || "http://localhost:3000"
 PipelineDeals.api_key = ENV['PIPELINEDEALS_API_KEY'] || 'iJHyFkMUBSfjUovt29'
