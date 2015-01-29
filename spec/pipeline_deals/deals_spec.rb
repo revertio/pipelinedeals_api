@@ -50,6 +50,14 @@ describe PipelineDeals::Deal do
     end
   end
 
+  it "can be filtered to deleted items" do
+    VCR.use_cassette(:deleted_deals) do
+      deals = PipelineDeals::Deal.deleted
+      expect(deals.size).to eq 1
+      expect(deals.first.id).to eq 1234
+    end
+  end
+
   describe "associations" do
     it "has a deal stage" do
       expect(deal.deal_stage).to be_an_instance_of PipelineDeals::DealStage

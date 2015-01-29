@@ -13,6 +13,13 @@ module PipelineDeals
       super(scope, options)
     end
 
+    # A scope for fetching deleted records
+    # Acts like `.where(clauses = {})`
+    def self.deleted(clauses = {})
+      clauses[:since] = 0 unless clauses.has_key?(:since)
+      find(:all, params: clauses, from: deleted_collection_path)
+    end
+
     def save
       PipelineDeals::Resource.add_keys(prefix_options)
       self.include_root_in_json = true
@@ -24,5 +31,13 @@ module PipelineDeals
       hash[:app_version] = PipelineDeals.app_version if PipelineDeals.app_version
       hash[:api_key] = PipelineDeals.api_key
     end
+
+    private
+
+      def self.deleted_collection_path
+        endpoint = "#{collection_name}/deleted"
+        "#{prefix}#{endpoint}#{format_extension}"
+      end
+
   end
 end
