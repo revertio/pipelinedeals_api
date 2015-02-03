@@ -54,7 +54,9 @@ describe PipelineDeals::Deal do
     VCR.use_cassette(:deleted_deals) do
       deals = PipelineDeals::Deal.deleted
       expect(deals.size).to eq 1
-      expect(deals.first.id).to eq 1234
+      deal = deals.first
+      expect(deal.class).to eq PipelineDeals::Deal
+      expect(deal.id).to eq 1234
     end
   end
 

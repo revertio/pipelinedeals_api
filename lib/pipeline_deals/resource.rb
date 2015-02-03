@@ -15,9 +15,16 @@ module PipelineDeals
 
     # A scope for fetching deleted records
     # Acts like `.where(clauses = {})`
+    # Take a required param `since` where the value is a date or timestamp "YYYY-MM-DD hh:mm:ss". Default: 0
     def self.deleted(clauses = {})
+      add_keys(clauses)
       clauses[:since] = 0 unless clauses.has_key?(:since)
-      find(:all, params: clauses, from: deleted_collection_path)
+
+      # The API only returns IDs. We have to wrap them ourselves.
+      response = get(:deleted, clauses)
+      response["entries"].collect do |entry_id|
+        instantiate_record(id: entry_id)
+      end
     end
 
     def save
@@ -31,13 +38,6 @@ module PipelineDeals
       hash[:app_version] = PipelineDeals.app_version if PipelineDeals.app_version
       hash[:api_key] = PipelineDeals.api_key
     end
-
-    private
-
-      def self.deleted_collection_path
-        endpoint = "#{collection_name}/deleted"
-        "#{prefix}#{endpoint}#{format_extension}"
-      end
 
   end
 end
