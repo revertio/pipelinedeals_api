@@ -20,11 +20,12 @@ module PipelineDeals
       add_keys(clauses)
       clauses[:since] = 0 unless clauses.has_key?(:since)
 
-      # The API only returns IDs. We have to wrap them ourselves.
       response = get(:deleted, clauses)
-      response["entries"].collect do |entry_id|
-        instantiate_record(id: entry_id)
+      # The API only returns IDs. We have to wrap them ourselves so that ActiveResource can play nicely.
+      response["entries"].collect! do |entry_id|
+        {id: entry_id}
       end
+      instantiate_collection response
     end
 
     def save
